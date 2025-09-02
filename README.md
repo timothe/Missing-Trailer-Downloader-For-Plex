@@ -46,37 +46,42 @@ Check [THIS WIKI](https://www.reddit.com/r/youtubedl/wiki/ffmpeg/#wiki_where_do_
 
 ---
 
-## 🐋 Installation via Docker
+## 🐋 Run with Docker
 
-This script can also be run in a Docker container, which will run continuously and check your Plex libraries once an hour.
+An official image is available on Docker Hub under the `netplexflix` account.
 
-Make sure you update the `config.yml` file with your Plex details and desired variables before running the container.
+- Image: `netplexflix/missing-trailer-downloader-for-plex:latest`
 
-### 1️⃣ Clone the repository
-Clone the repository:
+By default, the container runs on a schedule using cron. Configure via environment variables and a persistent config volume.
+
+### Quick Start
 ```sh
-git clone git clone https://github.com/netplexflix/Missing-Trailer-Downloader-for-Plex.git
-cd Missing-Trailer-Downloader-for-Plex
+docker run -d \
+  --name mtdp \
+  -e TZ="Europe/London" \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e CRON_SCHEDULE="0 * * * *" \
+  -v /path/to/your/config:/config \
+  netplexflix/missing-trailer-downloader-for-plex:latest
 ```
-![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) Or simply download by pressing the green 'Code' button above and then 'Download Zip'.
 
-### 2️⃣ Build Image
-Ensure you have [Docker](https://docs.docker.com/get-docker/) installed. Then, build the Docker image:
-```sh
-docker build -t mtdp .
-```
+- Mount `/config` to persist `config.yml` and logs. On first run, a default `config.yml` is created from `config.yml.example` if missing.
+- `CRON_SCHEDULE` controls how often the job runs (default hourly: `0 * * * *`).
+- Set `RUN_ON_START=true|false` to control an immediate run on container start (defaults to true).
 
-### 3️⃣ Run the Container
-Run the Docker container:
-```sh
-docker run -d -v /path/to/your/config:/app/config mtdp
-```
-Replace `/path/to/your/config` with the path to your `config.yml` file.
+See `docker-compose.yml` for a compose setup.
 
 ## ⚙️ Configuration
-Edit the `config.yml` file to set your Plex details and desired variables:
 
-- **LAUNCH_METHOD:** 0 = Choose at runtime, 1 = Movies only, 2 = TV Shows only, 3 = Both
+Copy the example file and edit your settings:
+```sh
+cp config/config.yml.example config/config.yml
+```
+
+Edit `config/config.yml` to set your Plex details and desired variables:
+
+- **LAUNCH_METHOD:** 0 = Choose at runtime, 1 = Movies only, 2 = TV Shows only, 3 = Both (Default)
 - **PLEX_URL:** Change if needed.
 - **PLEX_TOKEN:** [How to find your Plex Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/).
 - **MOVIE_LIBRARY_NAME:** The name of your Movie library in Plex (you can comma separate multiple libraries. eg: 'Movies, Movies4K')
@@ -124,29 +129,6 @@ Alternatively, pre-set your preferred method in `config.yml` (`LAUNCH_METHOD` fi
 
 
 ---
-## 🤝 Trailarr
-Check out [Trailarr](https://github.com/nandyalu/trailarr) if you want to ignore Plex Pass Trailers and want a UI, running in Docker!</br>
-Requires Radarr and Sonarr.
-
-<a href="https://github.com/nandyalu/trailarr">
-  <picture>
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://raw.githubusercontent.com/nandyalu/trailarr/main/assets/images/trailarr-full-512-lg.png"
-    >
-    <source
-      media="(prefers-color-scheme: light)"
-      srcset="https://raw.githubusercontent.com/nandyalu/trailarr/main/assets/images/trailarr-full-light-512-lg.png"
-    >
-    <img
-      alt="Trailarr logo with name"
-      src="https://raw.githubusercontent.com/nandyalu/trailarr/main/assets/images/trailarr-full-primary-512-lg.png"
-      width="20%"
-    >
-  </picture>
-</a>
-
-  
 ---  
 ### ❤️ Support the Project
 If you like this project, please ⭐ star the repository and share it with the community!
