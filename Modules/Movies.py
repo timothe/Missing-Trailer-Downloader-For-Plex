@@ -62,7 +62,7 @@ def parse_library_names(library_string):
 # Use container-mounted config at /config when running in container (/app)
 _root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _container_mode = _root_dir == "/app"
-config_path = "/config/config.yml" if _container_mode else os.path.join(_root_dir, 'config', 'config.yml')
+config_path = "/app/config/config.yml" if _container_mode else os.path.join(_root_dir, 'config', 'config.yml')
 with open(config_path, 'r', encoding='utf-8') as config_file:
     config = yaml.safe_load(config_file)
 
